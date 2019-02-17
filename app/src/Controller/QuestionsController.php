@@ -23,7 +23,7 @@ class QuestionsController extends AppController
      */
     public function index()
     {
-        $questions = $this->paginate($this->Questions->findQuestionsWithAnsweredCount(), [
+        $questions = $this->paginate($this->Questions->findQuestionsWithAnsweredCount()->contain(['Users']), [
             'order' => ['Questions.id' => 'DESC']
         ]);
 
@@ -42,7 +42,7 @@ class QuestionsController extends AppController
         if ($this->request->is('post')) {
             $question = $this->Questions->patchEntity($question, $this->request->getData());
 
-            $question->user_id = 1; // @TODO ユーザー管理機能実装時に修正する
+            $question->user_id = $this->Auth->user('id');
 
             if ($this->Questions->save($question)) {
                 $this->Flash->success('質問を投稿しました');
@@ -63,12 +63,13 @@ class QuestionsController extends AppController
      */
     public function view(int $id)
     {
-        $question = $this->Questions->get($id);
+        $question = $this->Questions->get($id, ['contain' => ['Users']]);
 
         $answers = $this
             ->Answers
             ->find()
             ->where(['Answers.question_id' => $id])
+            ->contain(['Users'])
             ->orderAsc('Answers.id')
             ->all();
 
@@ -88,7 +89,10 @@ class QuestionsController extends AppController
         $this->request->allowMethod(['post']);
 
         $question = $this->Questions->get($id);
-        // @TODO 質問を削除出来るのは質問投稿者のみとする
+        if ($question->user_id !== $this->Auth->user('id')) {
+            $this->Flash->error('他のユーザーの質問を削除することは出来ません');
+            return $this->redirect(['action' => 'index']);
+        }
 
         if ($this->Questions->delete($question)) {
             $this->Flash->success('質問を削除しました');

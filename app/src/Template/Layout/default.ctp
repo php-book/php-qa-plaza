@@ -42,16 +42,39 @@
             </button>
 
             <div class="collapse navbar-collapse" id="Navber">
+                <?php if ($this->request->getSession()->read('Auth.User.id')): ?>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <?= $this->Html->link('質問一覧',
+                            ['controller' => 'Questions', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link('質問を投稿する',
+                            ['controller' => 'Questions', 'action' => 'add'], ['class' => 'nav-link']) ?>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+
                 <ul class="navbar-nav ml-auto">
-                    <?php // @TODO ユーザー管理理機能実装時に修正する ?>
-                    <li class="nav-item">
-                        <?= $this->Html->link('ユーザー登録',
-                            ['controller' => 'Users', 'action' => 'add'], ['class' => 'nav-link']) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link('ログイン',
-                            ['controller' => 'Login', 'action' => 'index'], ['class' => 'nav-link']) ?>
-                    </li>
+                    <?php if ($this->request->getSession()->read('Auth.User.id')): ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link($this->request->getSession()->read('Auth.User.nickname'),
+                                ['controller' => 'Users', 'action' => 'edit'], ['class' => 'nav-link']) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link('ログアウト',
+                                ['controller' => 'Logout', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link('ユーザー登録',
+                                ['controller' => 'Users', 'action' => 'add'], ['class' => 'nav-link']) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link('ログイン',
+                                ['controller' => 'Login', 'action' => 'index'], ['class' => 'nav-link']) ?>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
