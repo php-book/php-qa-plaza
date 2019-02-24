@@ -7,6 +7,7 @@ use App\Model\Entity\Question;
 use App\Model\Entity\User;
 use App\Model\Table\QuestionsTable;
 use App\Model\Table\UsersTable;
+use App\Test\TestSuite\LoginTrait;
 use Cake\ORM\ResultSet;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
@@ -19,6 +20,8 @@ use Cake\TestSuite\IntegrationTestCase;
  */
 class QuestionsControllerTest extends IntegrationTestCase
 {
+    use LoginTrait;
+
     /**
      * Fixtures
      *
@@ -156,7 +159,8 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testAdd()
     {
-        $this->login();
+        $this->readyToPost();
+
         $this->get('/questions/add');
 
         $this->assertResponseOk('質問投稿画面を開けていない');
@@ -181,9 +185,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testAddPostSuccess()
     {
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->login();
+        $this->readyToPost();
 
         $postData = [
             'body' => '質問があります！'
@@ -208,9 +210,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testAddCreateContent()
     {
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $auth = $this->login();
+        $this->readyToPost();
 
         $postData = [
             'body' => '質問があります！'
@@ -219,7 +219,7 @@ class QuestionsControllerTest extends IntegrationTestCase
 
         $actual = $this->Questions->find()->last();
         $this->assertSame(
-            ['body' => $postData['body'], 'user_id' => $auth['Auth']['User']['id']],
+            ['body' => $postData['body'], 'user_id' => $this->_session['Auth']['User']['id']],
             $actual->extract(['body', 'user_id']),
             '投稿した内容通りに質問が作成されていない'
         );
@@ -232,9 +232,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testAddPostError()
     {
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->login();
+        $this->readyToPost();
 
         $this->post('/questions/add', []);
 
@@ -253,9 +251,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testDeleteSuccess()
     {
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->login();
+        $this->readyToPost();
 
         $targetQuestionId = 1;
         $this->post("/questions/delete/{$targetQuestionId}");
@@ -278,8 +274,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testDeleteContent()
     {
-        $this->enableCsrfToken();
-        $this->login();
+        $this->readyToPost();
 
         $targetQuestionId = 1;
         $this->post("/questions/delete/{$targetQuestionId}");
@@ -297,8 +292,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testDeleteNotExists()
     {
-        $this->enableCsrfToken();
-        $this->login();
+        $this->readyToPost();
 
         $targetQuestionId = 100;
         $this->post("/questions/delete/{$targetQuestionId}");
@@ -313,9 +307,7 @@ class QuestionsControllerTest extends IntegrationTestCase
      */
     public function testDeleteOtherUser()
     {
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->login();
+        $this->readyToPost();
 
         $targetQuestionId = 2; // 他のユーザーの質問
         $this->post("/questions/delete/{$targetQuestionId}");
@@ -329,18 +321,5 @@ class QuestionsControllerTest extends IntegrationTestCase
             'Flash.flash.0.message',
             '他のユーザーが質問を削除しようとした時のメッセージが正しくセットされていない'
         );
-    }
-
-    /**
-     * 認証情報のセットを行うヘルパー
-     *
-     * @return array 認証情報
-     */
-    private function login()
-    {
-        $auth = ['Auth' => ['User' => $this->Users->find()->first()]];
-        $this->session($auth);
-
-        return $auth;
     }
 }
