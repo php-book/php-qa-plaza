@@ -2,8 +2,8 @@
 
 namespace App\Model\Table;
 
-use Cake\ORM\Table;
 use Cake\Auth\DefaultPasswordHasher;
+use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
@@ -12,7 +12,7 @@ use Cake\Validation\Validator;
 class UsersTable extends Table
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize(array $config)
     {
@@ -44,6 +44,7 @@ class UsersTable extends Table
             ->add('username', 'alphaNumeric', [
                 'rule' => function ($value) {
                     $pattern = '/\A[a-zA-Z0-9]+\z/';
+
                     return (bool)preg_match($pattern, $value);
                 },
                 'message' => 'ユーザー名は半角英数字のみ入力してください'
@@ -67,6 +68,7 @@ class UsersTable extends Table
             ->add('password', 'securePassword', [
                 'rule' => function ($value) {
                     $pattern = '/\A([a-zA-Z]+(?=[0-9])|[0-9]+(?=[a-zA-Z]))[0-9a-zA-Z]+\z/';
+
                     return (bool)preg_match($pattern, $value);
                 },
                 'message' => 'パスワードは半角英数字混在で入力してください'
@@ -79,18 +81,22 @@ class UsersTable extends Table
             ]);
 
         $validator
-            ->add('password_current', 'check', [
-                'rule' => function ($value, $context) {
-                    $user = $this->get($context['data']['id']);
-                    if ((new DefaultPasswordHasher)->check($value, $user->password)) {
-                        return true;
-                    }
-                    return false;
-                },
-                'message' => '現在のパスワードが正しくありません',
-            ]);
+            ->add(
+                'password_current',
+                'check',
+                [
+                    'rule' => function ($value, $context) {
+                        $user = $this->get($context['data']['id']);
+                        if ((new DefaultPasswordHasher)->check($value, $user->password)) {
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    'message' => '現在のパスワードが正しくありません',
+                ]
+            );
 
         return $validator;
     }
-
 }

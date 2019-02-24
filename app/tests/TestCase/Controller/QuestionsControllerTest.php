@@ -149,7 +149,6 @@ class QuestionsControllerTest extends IntegrationTestCase
         $this->assertResponseCode(404, '存在しない質問を削除しようとした時のレスポンスが正しくない');
     }
 
-
     /**
      * 質問投稿画面のテスト
      *
@@ -293,7 +292,7 @@ class QuestionsControllerTest extends IntegrationTestCase
 
     /**
      * 質問削除のテスト / 存在しない質問を削除しようとした時の確認
-     * 
+     *
      * @return void
      */
     public function testDeleteNotExists()
@@ -303,13 +302,13 @@ class QuestionsControllerTest extends IntegrationTestCase
 
         $targetQuestionId = 100;
         $this->post("/questions/delete/{$targetQuestionId}");
-        
+
         $this->assertResponseCode(404, '存在しない質問を削除しようとした時のレスポンスが正しくない');
     }
 
     /**
      * 質問削除のテスト / 他のユーザーが質問を削除しようとした時の確認
-     * 
+     *
      * @return void
      */
     public function testDeleteOtherUser()
