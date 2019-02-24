@@ -12,7 +12,7 @@ class AnswersController extends AppController
     const ANSWER_UPPER_LIMIT = 100;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function beforeFilter(Event $event)
     {
@@ -61,6 +61,7 @@ class AnswersController extends AppController
         $questionId = $answer->question_id;
         if ($answer->user_id !== $this->Auth->user('id')) {
             $this->Flash->error('他のユーザーの回答を削除することはできません');
+
             return $this->redirect(['controller' => 'Questions', 'action' => 'view', $questionId]);
         }
 

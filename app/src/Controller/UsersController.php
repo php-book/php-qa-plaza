@@ -10,7 +10,7 @@ namespace App\Controller;
 class UsersController extends AppController
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize()
     {

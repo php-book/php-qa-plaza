@@ -25,6 +25,7 @@ class LoginController extends AppController
             $user = $this->Auth->identify();
             if ($user) {
                 $this->Auth->setUser($user);
+
                 return $this->redirect($this->Auth->redirectUrl());
             }
             $this->Flash->error('ユーザー名またはパスワードが不正です');

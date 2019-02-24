@@ -31,7 +31,7 @@ class User extends Entity
     /**
      * パスワードをハッシュ化する
      *
-     * @param $value string 生パスワード
+     * @param string $value 生パスワード
      * @return bool|string ハッシュ化されたパスワード
      */
     protected function _setPassword($value)

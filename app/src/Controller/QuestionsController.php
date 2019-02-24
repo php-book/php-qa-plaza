@@ -8,7 +8,7 @@ namespace App\Controller;
 class QuestionsController extends AppController
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize()
     {
@@ -91,6 +91,7 @@ class QuestionsController extends AppController
         $question = $this->Questions->get($id);
         if ($question->user_id !== $this->Auth->user('id')) {
             $this->Flash->error('他のユーザーの質問を削除することは出来ません');
+
             return $this->redirect(['action' => 'index']);
         }
 

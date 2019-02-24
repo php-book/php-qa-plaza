@@ -8,7 +8,7 @@ namespace App\Controller;
 class LogoutController extends AppController
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize()
     {
@@ -24,7 +24,7 @@ class LogoutController extends AppController
     public function index()
     {
         $this->Flash->success('ログアウトしました');
+
         return $this->redirect($this->Auth->logout());
     }
-
 }

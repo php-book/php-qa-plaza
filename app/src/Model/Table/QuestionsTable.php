@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
 class QuestionsTable extends Table
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize(array $config)
     {
